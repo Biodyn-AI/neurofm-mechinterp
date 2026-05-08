@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neurofm-mechinterp"
+version = "0.1.0"
+description = "Local mechanistic interpretability tooling for BrainOmni"
+requires-python = ">=3.11"
+dependencies = [
+  "einops>=0.8",
+  "einx>=0.3",
+  "huggingface_hub>=0.31",
+  "matplotlib>=3.9",
+  "mne>=1.8",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "scipy>=1.13",
+  "seaborn>=0.13",
+  "vector-quantize-pytorch>=1.22",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

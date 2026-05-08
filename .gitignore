@@ -1,0 +1,61 @@
+# --- Build / Python -----------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Virtual envs -------------------------------------------------------
+.venv/
+venv/
+env/
+
+# --- Editor / OS junk ---------------------------------------------------
+.DS_Store
+._*
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# --- Project-specific transient outputs --------------------------------
+external/checkpoints/
+results/
+data/
+share/
+scratch/
+logs/
+*.log
+
+# --- Agent / tool state -------------------------------------------------
+.claude/
+.cursor/
+
+# --- LaTeX compilation artifacts ---------------------------------------
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
+
+# Keep the compiled paper.pdf checked in (so reviewers can read it
+# without rebuilding) but ignore everything else under reports/paper/.
+reports/paper/paper.log
+reports/paper/paper.aux
+reports/paper/paper.out
+reports/paper/paper.toc
+reports/paper/paper.fdb_latexmk
+reports/paper/paper.fls
+reports/paper/paper.synctex.gz

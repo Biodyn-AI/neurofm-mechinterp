@@ -746,7 +746,9 @@ Holm-corrected across the two directions and, as a check, across both directions
 \subsection{Software and reproducibility}
 
 All analyses used PyTorch 2.11, scikit-learn 1.8 and MNE-Python 1.12 on a single Apple
-M2 Pro computer. For every export and intervention run, GPU (Metal) results were checked against
+M2 Pro computer. The analysis code was developed and the analyses were run with the assistance of
+Claude Opus 4.7 and Claude Opus 5.5 (Anthropic; see the Declaration of generative AI and
+AI-assisted technologies). For every export and intervention run, GPU (Metal) results were checked against
 CPU results on its first four segments: the unit vectors differed by at most $\DeviceUnitDiffMax\times10^{-6}$, and the
 codes were identical for the released and embedded tokenizers and agreed for at least
 \DeviceCodeReplicaMinPct\% of the vectors for the tokenizers we trained (the untrained controls,
@@ -1430,9 +1432,14 @@ Writing --- review \& editing.
 The author declares that he has no known competing financial interests or personal
 relationships that could have appeared to influence the work reported in this paper.
 
+\section*{Funding}
+This research did not receive any specific grant from funding agencies in the public,
+commercial, or not-for-profit sectors.
+
 \section*{Declaration of generative AI and AI-assisted technologies}
-During the preparation of this work the author used generative AI tools to assist
-with code development and language editing. After using these tools, the author
+During the preparation of this work the author used Claude Opus 4.7 and Claude Opus 5.5
+(Anthropic) to assist with code development, running the analyses, and drafting and editing the
+text. After using these tools, the author
 reviewed and edited the content as needed and takes full responsibility for the
 content of the publication.
 

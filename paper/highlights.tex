@@ -1,0 +1,25 @@
+%% Highlights for Neural Networks (Elsevier)
+%% 3-5 bullet points, each <= 85 characters including spaces.
+%% Compile: pdflatex highlights.tex
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\pagestyle{empty}
+\begin{document}
+\begin{center}\textbf{\large Highlights}\end{center}
+
+\noindent\textbf{One Anchor per Source: Hyperspherical Geometry and Causal Roles of the
+Latent Sources in an EEG/MEG Foundation-Model Tokenizer}
+
+\medskip
+\noindent Ihor Kendiukhov
+
+\bigskip
+\begin{itemize}
+\item Each latent source of an EEG/MEG tokenizer occupies a cap around a learned anchor
+\item The anchor is the leading uncentered, not centered, principal direction of a source
+\item Decoder keys read where a source lies relative to anchors; values read its content
+\item With a decoder source embedding (two training runs), the anchors do not separate
+\item Tokens retain diagnostic information, not concentrated in anchors within cohorts
+\end{itemize}
+\end{document}

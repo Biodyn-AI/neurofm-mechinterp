@@ -10,6 +10,8 @@ from .paths import CHECKPOINT_ROOT, ensure_dir
 
 
 HF_REPO_ID = "OpenTSLab/BrainOmni"
+# revision of the Hugging Face repository whose checkpoints all analyses used
+HF_REVISION = "9a4d3c70495370397ccfbfd6d2496f25647545a5"
 VARIANT_FILES = {
     "tiny": ["model_cfg.json", "BrainOmni.pt"],
     "base": ["model_cfg.json", "BrainOmni.pt"],
@@ -28,6 +30,7 @@ def download_variant(variant: str, root: Path | None = None) -> Path:
         hf_hub_download(
             repo_id=HF_REPO_ID,
             filename=f"{variant}/{filename}",
+            revision=HF_REVISION,
             local_dir=root,
         )
     return root / variant

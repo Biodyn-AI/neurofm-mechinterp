@@ -1,0 +1,19 @@
+\begin{table}[tbp]
+\renewcommand{\baselinestretch}{1}
+\caption{Tokenizers compared: released (all subjects of the four cohorts); embedded, the tokenizer stored in the foundation-model checkpoints (PD-UCSD and PD-Iowa, all subjects; interventions on PD-UCSD only); replicas trained from scratch and the source-embedding variants (held-out subjects of the four cohorts). Ranges over cohorts. MSE: median over all segments of the reconstruction error of a segment on all sensors (the released tokenizer reached 0.37--0.39 on the subjects of the embedded tokenizer and \RepReleasedMSEMin--\RepReleasedMSEMax{} on the held-out subjects of the tokenizers trained from scratch); $\Rbar$: range over sources and cohorts; anchor dim.: effective number of directions spanned by the 16 anchors (participation ratio of their cosine matrix); zero-anchor: median $\dmse$ in percent of the unedited error and number of source--cohort pairs with an interval above zero, out of all pairs evaluated; keys, values: damage of zero-anchor applied to the decoder's keys alone or to its values alone, relative to the damage of the full edit; $I(S;C_1)$: bits.}
+\label{tab:replication}
+\centering\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{tokenizer} & \textbf{MSE} & $\Rbar$ & \textbf{anchor dim.} & \textbf{zero-anchor} & \textbf{keys} & \textbf{values} & $I(S;C_1)$ \\
+\midrule
+released & 0.31--0.39 & 0.49--0.73 & 3.9--4.0 & 3.9--8.1\% (64/64) & 0.88--0.97 & 0.12--0.30 & 3.00--3.96 \\
+embedded & 0.38--0.40 & 0.57--0.73 & 4.0 & 4.6\% (16/16) & 0.89 & 0.23 & 3.46--3.51 \\
+replica 1 & 0.45--0.58 & 0.92--0.97 & 2.0 & 1.6--2.7\% (64/64) & 0.79--1.31 & 1.82--2.48 & 3.61--3.91 \\
+replica 2 & 0.45--0.55 & 0.91--0.97 & 2.0 & 1.4--3.0\% (64/64) & 0.51--0.70 & 1.10--2.40 & 3.60--3.78 \\
+variant 1 & 0.31--0.43 & 0.87--0.95 & 1.0 & 4.5--10.8\% (64/64) & 0.00 & 1.04--1.08 & 0.06--0.17 \\
+variant 2 & 0.36--0.48 & 0.91--0.97 & 1.0 & 5.1--9.7\% (64/64) & 0.01--0.02 & 1.26--1.45 & 0.34--0.79 \\
+\bottomrule
+\end{tabular}
+\end{table}

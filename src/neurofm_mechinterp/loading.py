@@ -80,3 +80,52 @@ def load_braintokenizer(
     model.eval()
     return model.to(resolve_device(device))
 
+
+def _tokenizer_skeleton(checkpoint_root: Path | None = None) -> torch.nn.Module:
+    _configure_upstream_imports()
+    from braintokenizer.model import BrainTokenizer  # imported lazily after path setup
+
+    checkpoint_root = checkpoint_root or CHECKPOINT_ROOT
+    return BrainTokenizer(**_load_config(checkpoint_root / "braintokenizer"))
+
+
+def load_embedded_tokenizer(
+    variant: str = "tiny",
+    device: str | None = None,
+    checkpoint_root: Path | None = None,
+) -> torch.nn.Module:
+    """Load the tokenizer stored inside a BrainOmni checkpoint (tiny and base share it).
+
+    Its encoder matches the standalone BrainTokenizer up to bfloat16 rounding, but its RVQ
+    codebooks differ, so it is a second tokenizer instance of the same architecture.
+    """
+    checkpoint_root = checkpoint_root or CHECKPOINT_ROOT
+    model = _tokenizer_skeleton(checkpoint_root)
+    full = torch.load(checkpoint_root / variant / "BrainOmni.pt", map_location="cpu", weights_only=True)
+    state = {k[len("tokenizer."):]: v.float() for k, v in full.items() if k.startswith("tokenizer.")}
+    model.load_state_dict(state, strict=True)
+    model.eval()
+    return model.to(resolve_device(device))
+
+
+def load_random_tokenizer(seed: int = 0, device: str | None = None) -> torch.nn.Module:
+    """An untrained BrainTokenizer with the released configuration (geometry control)."""
+    torch.manual_seed(seed)
+    model = _tokenizer_skeleton()
+    model.eval()
+    return model.to(resolve_device(device))
+
+
+def load_tokenizer(key: str = "released", device: str | None = None) -> torch.nn.Module:
+    """Dispatch on a tokenizer key: 'released', 'brainomni_tiny', 'random_init<seed>' or a replica directory."""
+    if key == "released":
+        return load_braintokenizer(device=device)
+    if key == "brainomni_tiny":
+        return load_embedded_tokenizer("tiny", device=device)
+    if key.startswith("random_init"):
+        return load_random_tokenizer(int(key[len("random_init"):] or 0), device=device)
+    from .replicas import load_replica  # noqa: PLC0415
+
+    path, _, tag = key.partition("@")  # "<replica dir>@init" loads the step-0 weights
+    return load_replica(Path(path), device=device, tag=tag or "final")
+

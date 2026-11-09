@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Build publication-style figures from existing CSV/JSON results.
+"""Build figures of the exploratory analyses (sparse autoencoders, source prototypes) from existing
+CSV/JSON results; the figures of the manuscript in paper/ are made by scripts/make_manuscript_figures.py.
 
 Outputs are saved as PNG and PDF (300 dpi) under `results/figures/`.
 
@@ -54,7 +55,7 @@ def figure_source_dominance() -> None:
       (a) PD31 EEG top-1 source count (76 segments, 4-subject sweep).
       (b) MEG-MMI top-1 source count from the original 2-subject 20-segment sweep.
       (c) MEG-MMI uncropped 6-subject source-ablation Δ MSE (per source) — the
-          analysis basis for the paper's source-2 vs source-9 dissociation.
+          basis of the exploratory source-2 vs source-9 comparison.
     """
     pd31 = pd.read_csv(RESULTS_ROOT / "source_stability" / "pd31" / "source_summary.csv")
     meg_2subj = pd.read_csv(RESULTS_ROOT / "source_stability" / "MEG-MMI" / "source_summary.csv")
@@ -176,7 +177,7 @@ def figure_patch_decomposition() -> None:
     """F3: projection vs residual cross-subject patching, expanded sets, three sources.
 
     Uses expanded10 PD31 source 3, expanded6 MEG source 2, and expanded6 MEG
-    source 9 — matches the paper's §6 main table.
+    source 9 (the patching sets of the exploratory analyses).
     """
     sae_root = RESULTS_ROOT / "sae_models"
     pd31_dir = sae_root / "pd31" / "encoder_pre_quantizer" / "linear_topk64_h1024_l1_0_seed0_expanded10_topk64_ep10"

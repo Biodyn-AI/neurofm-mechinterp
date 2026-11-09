@@ -1,0 +1,36 @@
+\begin{table}[tbp]
+\renewcommand{\baselinestretch}{1}
+\caption{Transfer between the two Parkinson's cohorts (released tokenizer): a classifier trained on all subjects of one cohort and applied to the other. AUC with 95\% bootstrap interval over the test subjects; $p$: permutation of the test labels, Holm-corrected across the two directions for anchor-16 and Benjamini--Hochberg-corrected within a direction for the other representations; rand.: number of the 1{,}000 random 16-direction representations with at least the same AUC. Band power is restricted to the 29 sensors shared by the two montages.}
+\label{tab:transfer}
+\centering\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{3}{c}{PD-Iowa $\to$ PD-UCSD} & \multicolumn{3}{c}{PD-UCSD $\to$ PD-Iowa} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{representation} & AUC & $p$ & rand. & AUC & $p$ & rand. \\
+\midrule
+\multicolumn{7}{@{}l}{\emph{features standardized with the training cohort's statistics}} \\
+anchor-16 & 0.84 [0.68, 0.97] & $<$0.001 & 2 & 0.68 [0.58, 0.76] & $<$0.001 & 62 \\
+quantized anchor-16 & 0.74 [0.55, 0.93] & 0.030 & 88 & 0.63 [0.53, 0.73] & 0.006 & 202 \\
+concentration-16 & 0.80 [0.63, 0.94] & 0.017 & 13 & 0.64 [0.54, 0.73] & 0.006 & 188 \\
+norm-16 & 0.77 [0.58, 0.93] & 0.020 & 48 & 0.69 [0.60, 0.78] & $<$0.001 & 28 \\
+pooled & 0.68 [0.48, 0.88] & 0.057 & 252 & 0.65 [0.56, 0.75] & 0.006 & 128 \\
+tangent & 0.72 [0.53, 0.89] & 0.043 & 131 & 0.64 [0.55, 0.73] & 0.006 & 197 \\
+full & 0.71 [0.51, 0.89] & 0.043 & 158 & 0.63 [0.55, 0.73] & 0.006 & 203 \\
+quantized & 0.66 [0.46, 0.87] & 0.077 & 342 & 0.60 [0.50, 0.69] & 0.030 & 417 \\
+band power & 0.63 [0.42, 0.82] & 0.110 & 492 & 0.63 [0.54, 0.72] & 0.007 & 244 \\
+\midrule
+\multicolumn{7}{@{}l}{\emph{features standardized within each cohort}} \\
+anchor-16 & 0.81 [0.64, 0.95] & 0.002 & 13 & 0.71 [0.62, 0.80] & $<$0.001 & 16 \\
+quantized anchor-16 & 0.74 [0.55, 0.91] & 0.035 & 82 & 0.70 [0.60, 0.79] & $<$0.001 & 28 \\
+concentration-16 & 0.77 [0.58, 0.92] & 0.019 & 40 & 0.64 [0.54, 0.74] & 0.005 & 202 \\
+norm-16 & 0.78 [0.58, 0.93] & 0.019 & 30 & 0.69 [0.60, 0.78] & $<$0.001 & 39 \\
+pooled & 0.58 [0.38, 0.80] & 0.229 & 702 & 0.66 [0.57, 0.76] & 0.003 & 115 \\
+tangent & 0.70 [0.50, 0.89] & 0.053 & 185 & 0.64 [0.55, 0.73] & 0.005 & 229 \\
+full & 0.71 [0.52, 0.89] & 0.049 & 141 & 0.64 [0.55, 0.74] & 0.005 & 192 \\
+quantized & 0.64 [0.43, 0.85] & 0.112 & 408 & 0.60 [0.51, 0.70] & 0.022 & 393 \\
+band power & 0.66 [0.46, 0.85] & 0.099 & 340 & 0.62 [0.53, 0.72] & 0.008 & 291 \\
+\bottomrule
+\end{tabular}
+\end{table}

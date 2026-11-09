@@ -1,0 +1,29 @@
+\begin{sidewaystable}
+\renewcommand{\baselinestretch}{1}
+\caption{Subject-level diagnostic read-out (released tokenizer): AUC (mean over 20 repetitions of stratified five-fold cross-validation) with a 95\% stratified bootstrap interval over subjects in which the out-of-fold scores are held fixed (it does not include the variability of model fitting; inference rests on the permutation tests). Markers: $^{*}$ permutation $p<0.05$ (anchor-16: Holm-corrected across contrasts; secondary representations: Benjamini--Hochberg-corrected within contrast; best single anchor, adjusted representations and age and sex: uncorrected). The permutation tests use the pipeline with the inverse regularization strength fixed at 1 and two repetitions (\cref{sec:methods-readout}), whose statistic differs from the AUC shown by at most \PermStatMaxDiff, so a marked AUC can have an interval that includes 0.5. Best single anchor: the anchor coordinate whose AUC on the training subjects is farthest from 0.5, selected inside every training fold and evaluated out of fold (per-source results are given in the text); adjusted: age and sex regressed out within training folds. Last row: AUC range (2.5--97.5\% quantiles) of 100 random 16-direction representations evaluated like anchor-16.}
+\label{tab:readout}
+\centering\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lccccc}
+\toprule
+& \textbf{PD-UCSD} & \textbf{PD-Iowa} & \textbf{Dementia} & \textbf{Dementia} & \textbf{MDD-MEG} \\
+& \textbf{PD vs HC} ($n=31$) & \textbf{PD vs HC} ($n=148$) & \textbf{AD vs CN} ($n=65$) & \textbf{FTD vs CN} ($n=52$) & \textbf{MDD vs HV} ($n=49$) \\
+\midrule
+anchor-16 & 0.62 [0.48, 0.76] & 0.67$^{*}$ [0.59, 0.75] & 0.72$^{*}$ [0.61, 0.82] & 0.65 [0.52, 0.77] & 0.42 [0.31, 0.55] \\
+best single anchor & 0.44 [0.31, 0.57] & 0.59 [0.51, 0.67] & 0.67$^{*}$ [0.57, 0.78] & 0.70$^{*}$ [0.56, 0.83] & 0.47 [0.36, 0.59] \\
+quantized anchor-16 & 0.53 [0.38, 0.67] & 0.70$^{*}$ [0.61, 0.78] & 0.75$^{*}$ [0.64, 0.85] & 0.63$^{*}$ [0.49, 0.75] & 0.49 [0.36, 0.62] \\
+concentration-16 & 0.59 [0.44, 0.73] & 0.69$^{*}$ [0.61, 0.77] & 0.68$^{*}$ [0.57, 0.79] & 0.65$^{*}$ [0.52, 0.77] & 0.42 [0.31, 0.55] \\
+norm-16 & 0.63 [0.50, 0.76] & 0.64$^{*}$ [0.56, 0.72] & 0.79$^{*}$ [0.68, 0.89] & 0.71$^{*}$ [0.58, 0.83] & 0.42 [0.30, 0.55] \\
+pooled & 0.56 [0.40, 0.73] & 0.68$^{*}$ [0.61, 0.76] & 0.83$^{*}$ [0.73, 0.91] & 0.62$^{*}$ [0.50, 0.74] & 0.50 [0.38, 0.62] \\
+tangent & 0.49 [0.33, 0.65] & 0.73$^{*}$ [0.66, 0.80] & 0.83$^{*}$ [0.72, 0.91] & 0.77$^{*}$ [0.65, 0.88] & 0.53 [0.39, 0.66] \\
+full & 0.52 [0.35, 0.68] & 0.73$^{*}$ [0.66, 0.80] & 0.83$^{*}$ [0.73, 0.91] & 0.76$^{*}$ [0.64, 0.87] & 0.52 [0.39, 0.65] \\
+quantized & 0.48 [0.32, 0.65] & 0.71$^{*}$ [0.63, 0.79] & 0.82$^{*}$ [0.72, 0.91] & 0.75$^{*}$ [0.63, 0.86] & 0.54 [0.40, 0.67] \\
+band power & 0.52 [0.39, 0.66] & 0.73$^{*}$ [0.65, 0.80] & 0.83$^{*}$ [0.74, 0.91] & 0.83$^{*}$ [0.73, 0.93] & 0.49 [0.35, 0.62] \\
+anchor-16, adjusted & 0.63 [0.50, 0.77] & 0.68$^{*}$ [0.60, 0.76] & 0.70$^{*}$ [0.59, 0.81] & 0.62$^{*}$ [0.50, 0.73] & 0.50 [0.38, 0.62] \\
+full, adjusted & 0.52 [0.35, 0.69] & 0.73$^{*}$ [0.64, 0.80] & 0.79$^{*}$ [0.68, 0.89] & 0.78$^{*}$ [0.66, 0.89] & 0.50 [0.38, 0.62] \\
+band power, adjusted & 0.49 [0.37, 0.62] & 0.72$^{*}$ [0.63, 0.79] & 0.81$^{*}$ [0.71, 0.90] & 0.83$^{*}$ [0.71, 0.92] & 0.53 [0.40, 0.66] \\
+age and sex & 0.31 [0.26, 0.35] & 0.58$^{*}$ [0.51, 0.65] & 0.57 [0.48, 0.67] & 0.54 [0.43, 0.66] & 0.64$^{*}$ [0.52, 0.76] \\
+\midrule random 16 directions & 0.38--0.66 & 0.56--0.74 & 0.66--0.86 & 0.53--0.81 & 0.37--0.62 \\
+\bottomrule
+\end{tabular}
+\end{sidewaystable}

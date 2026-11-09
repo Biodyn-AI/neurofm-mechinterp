@@ -1,0 +1,39 @@
+\begin{table}[tbp]
+\renewcommand{\baselinestretch}{1}
+\caption{Edits applied to the unit vectors of one source, in the hyperspherical coordinates
+  of \cref{eq:coords} (anchor $\anchor$, anchor coordinate $a=\cos\theta$, tangent direction
+  $\bm{\sigma}\perp\anchor$). Every edit maps unit vectors to unit vectors. $\bm{\sigma}'$ and
+  $\uvec'$ denote the tangent direction and the unit vector at the same position of a segment
+  from another subject; the \emph{support} is the span of the 64 leading tangent axes.
+  Statistics ($\anchor$, $\bar{a}$, tangent axes, mean of the tangent directions) are cross-fitted
+  (\cref{sec:methods-interventions}). Routing: zero-anchor, the anchor swap, tangent resample and
+  tangent-axis resample (4) were also applied only to the input of the decoder's attention keys, or
+  only to that of its values.}
+\label{tab:operators}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}p{0.42\linewidth}>{\raggedright\arraybackslash}p{0.27\linewidth}@{}}
+\toprule
+\textbf{edit} & \textbf{definition} & \textbf{changes} \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Location: $\bm{\sigma}$ kept}} \\
+zero-anchor          & $a\leftarrow0$ ($\theta\leftarrow90^\circ$)                         & colatitude \\
+half-anchor          & $a\leftarrow a/2$                                                   & colatitude \\
+mean-anchor          & $a\leftarrow\bar{a}$ (mean anchor coordinate)                        & colatitude variation \\
+resample-anchor      & $a\leftarrow$ coordinates randomly permuted among the vectors of the segment & pairing of $a$ and $\bm{\sigma}$ \\
+colatitude shift     & $\theta\leftarrow\min\{\max(\theta+\delta,0^\circ),180^\circ\}$, $\delta\in\{\pm10^\circ,\pm20^\circ\}$ (clipped at the anchor) & colatitude \\
+\multicolumn{3}{@{}l}{\emph{Content: $a$ kept}} \\
+tangent-axis resample ($k$) & components of $\bm{\sigma}$ on the $k$ leading tangent axes $\leftarrow$ those of $\bm{\sigma}'$; renormalized & content in the leading axes \\
+tangent-axis mean ($k$) & as above with the mean $\E[\bm{\sigma}]$ of the tangent directions (not normalized) instead of $\bm{\sigma}'$ & content in the leading axes \\
+random-support resample ($k$) & as tangent-axis resample, $k$ random orthonormal directions of the support & content in a random subspace \\
+random resample (16) & as above, 16 random directions of the whole tangent space ($\perp\anchor$) & content in a random subspace \\
+tangent resample     & $\bm{\sigma}\leftarrow\bm{\sigma}'$                                  & all content \\
+matched rotation     & $\bm{\sigma}\leftarrow\cos\psi\,\bm{\sigma}+\sin\psi\,\bm{\xi}$, $\bm{\xi}\perp\bm{\sigma}$ random in the support (or in $\anchor^{\perp}$), $\psi$ giving zero-anchor's displacement ($\psi=180^\circ$ within $30^\circ$ of $\anchor$) & content, at equal displacement \\
+rotation ($\psi$)    & as above with $\psi=30^\circ,60^\circ,90^\circ$, $\bm{\xi}$ in the support & content \\
+\multicolumn{3}{@{}l}{\emph{Source identity and whole source}} \\
+anchor swap          & rotation in $\operatorname{span}\{\anchor_s,\anchor_{s'}\}$ taking $\anchor_s$ to the anchor $\anchor_{s'}$ of another source & which anchor \\
+collapse             & $\uvec\leftarrow\anchor$                                            & all content and colatitude \\
+source resample      & $\uvec\leftarrow\uvec'$                                             & everything \\
+\bottomrule
+\end{tabular}
+\end{table}

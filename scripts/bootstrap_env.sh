@@ -9,7 +9,7 @@ rm -rf "$ROOT_DIR/.conda-env"
 mkdir -p "$(dirname "$ENV_DIR")"
 conda create -y -p "$ENV_DIR" python=3.11 pip setuptools wheel
 conda run -p "$ENV_DIR" python -m pip install --upgrade pip
-conda run -p "$ENV_DIR" python -m pip install torch
+conda run -p "$ENV_DIR" python -m pip install -r "$ROOT_DIR/requirements-lock.txt"
 conda run -p "$ENV_DIR" python -m pip install -e "$ROOT_DIR"
 
 echo "Environment ready at: $ENV_DIR"

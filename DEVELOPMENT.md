@@ -1,6 +1,6 @@
 # Development notes
 
-Engineering notes and recipes for working with this repository — environment setup, common commands, architecture, and conventions.
+Engineering notes and recipes for the exploratory analyses in this repository (upstream demo sample, sparse autoencoders, source prototypes) — environment setup, common commands, architecture, and conventions. The paper's pipeline and how to reproduce it are described in `README.md`.
 
 ## Environment
 
@@ -11,7 +11,7 @@ ENV_PATH="$HOME/.conda-envs/neurofm-mechinterp"
 conda run -p "$ENV_PATH" python <script>
 ```
 
-Python 3.11 is required. The `.venv/` directory in the repo is unused — do not install into it.
+Python 3.11 is required.
 
 ## Common commands
 
@@ -24,7 +24,7 @@ conda run -p "$ENV_PATH" python scripts/download_brainomni.py --variant braintok
 conda run -p "$ENV_PATH" python scripts/run_all_example_analyses.py --variant tiny
 
 # Real-data path (OpenNeuro ds002778 → pd31 EEG, ds003568 → MEG-MMI)
-conda run -p "$ENV_PATH" python scripts/download_openneuro_subsets.py --dataset all
+conda run -p "$ENV_PATH" python scripts/download_openneuro_subsets.py
 conda run -p "$ENV_PATH" python scripts/preprocess_openneuro_subsets.py --dataset all --force
 conda run -p "$ENV_PATH" python scripts/run_real_dataset_analyses.py --dataset pd31 --variant tiny
 ```
@@ -43,11 +43,11 @@ conda run -p "$ENV_PATH" python -m unittest tests.test_sae.SaeHelpersTests.test_
 
 ## Architecture
 
-This repo is a thin analysis layer around the **upstream BrainOmni reference implementation** vendored at `upstream/BrainOmni/` (a separate git repo, do not modify in passing). The local package `neurofm_mechinterp` (under `src/`) loads upstream models and provides three families of analyses.
+This repo is a thin analysis layer around the **upstream BrainOmni reference implementation** vendored at `upstream/BrainOmni/` (a separate git repo, do not modify in passing). The local package `neurofm_mechinterp` (under `src/`) loads upstream models and provides the exploratory analyses described below and the modules of the paper's pipeline (`anchors.py`, `requantize.py`, `readout.py`, `subject_features.py`, `cohorts.py`, `replicas.py`; see `README.md`).
 
 ### Loading path (`loading.py`, `compat.py`, `checkpoints.py`)
 
-`load_brainomni()` and `load_braintokenizer()` are the only public entry points to the model. Both:
+`load_brainomni()` and `load_braintokenizer()` are the entry points to the released models (`load_tokenizer()` dispatches between the released, embedded and untrained tokenizers and those trained from scratch, `replicas.load_replica()`). Both:
 
 1. Install a **DeepSpeed stub** (`compat.install_deepspeed_comm_stub`) so upstream imports succeed without DeepSpeed — this repo intentionally avoids the dependency for inference. Any code that imports `brainomni`/`braintokenizer` directly must call `_configure_upstream_imports()` first.
 2. Lazy-prepend `upstream/BrainOmni` to `sys.path`, then import the upstream model.
@@ -60,7 +60,7 @@ This repo is a thin analysis layer around the **upstream BrainOmni reference imp
 
 Tokenizer activations are shaped `B × source × patch × frame × dim` where `source` is one of the 16 learned latent variables. `sae.flatten_source_activations` / `restore_source_activations` move between this shape and row form, preserving `source_idx`/`patch_idx`/`frame_idx` metadata.
 
-### The three core analyses (`src/neurofm_mechinterp/analysis/`)
+### The exploratory analyses (`src/neurofm_mechinterp/analysis/`)
 
 - **`tokenizer_semantics.py`** — codebook usage stats for the residual VQ. Token indices are emitted **per learned source variable, not per observed sensor**, so per-code summaries track which source dominates each code. Bandpower uses **per-sensor spectra averaged afterwards** (`mean_sensor_relative_bandpower`) to avoid out-of-phase cancellation.
 - **`source_ablation.py`** — zero out each of the 16 tokenizer source latents and measure ΔMSE, code-change rate, and worst-affected sensors. Source selection is by feature energy when limited via `max_sources`.

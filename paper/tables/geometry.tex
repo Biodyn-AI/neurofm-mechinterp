@@ -1,0 +1,17 @@
+\begin{table}[tbp]
+\renewcommand{\baselinestretch}{1}
+\caption{Geometry of the per-source unit vectors (released tokenizer); ranges over the 16 sources. $\Rbar$: mean resultant length; colat.: mean colatitude; $\cos(\anchor,\bm{v}_1)$: anchor versus leading uncentered direction; bound: residual bound~\eqref{eq:residual-bound} on $\sin\angle(\anchor,\bm{v}_1)$; $|\cos(\anchor,\mathrm{PC}_k)|$: largest absolute cosine with the ten leading centered PCs; $\|P_{16}\anchor\|^2$: squared norm of the anchor in the span of the 16 leading centered PCs; var.: share of the centered variance along the anchor (rank among the centered eigenvalues); PR: participation ratio of the centered covariance, $(\operatorname{tr}\Sigma_s)^2/\operatorname{tr}(\Sigma_s^2)$. Upper limits ($\leq$) are rounded up and lower limits ($\geq$) down. Per-source values, with a bootstrap interval for $\Rbar$, are given in \cref{app:tables}.}
+\label{tab:geometry}
+\centering\scriptsize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+\textbf{cohort} & $\Rbar$ & \textbf{colat.}\,($^\circ$) & $\cos(\anchor,\bm{v}_1)$ & \textbf{bound} & $|\cos(\anchor,\mathrm{PC}_k)|$ & $\|P_{16}\anchor\|^2$ & \textbf{var.} (\textbf{rank}) & \textbf{PR} \\
+\midrule
+PD-UCSD & 0.57--0.73 & 43--55 & $\geq$0.9986 & $\leq$0.054 & $\leq$0.50 & 0.24--0.83 & 2.2--3.5\% (12--18) & 16--21 \\
+PD-Iowa & 0.58--0.70 & 45--54 & $\geq$0.9994 & $\leq$0.038 & $\leq$0.53 & 0.25--0.87 & 2.4--3.8\% (12--17) & 16--23 \\
+Dementia & 0.49--0.65 & 49--60 & $\geq$0.9973 & $\leq$0.080 & $\leq$0.59 & 0.26--0.88 & 2.5--4.9\% (7--17) & 17--22 \\
+MDD-MEG & 0.57--0.71 & 44--55 & $\geq$0.9995 & $\leq$0.035 & $\leq$0.40 & 0.13--0.40 & 1.3--1.8\% (16--22) & 17--20 \\
+\bottomrule
+\end{tabular}
+\end{table}

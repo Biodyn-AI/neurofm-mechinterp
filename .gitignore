@@ -50,12 +50,6 @@ logs/
 *.synctex.gz
 *.toc
 
-# Keep the compiled paper.pdf checked in (so reviewers can read it
-# without rebuilding) but ignore everything else under reports/paper/.
-reports/paper/paper.log
-reports/paper/paper.aux
-reports/paper/paper.out
-reports/paper/paper.toc
-reports/paper/paper.fdb_latexmk
-reports/paper/paper.fls
-reports/paper/paper.synctex.gz
+# --- Release assets downloaded into the repository root -----------------
+/results_*.tar.gz
+/SHA256SUMS.txt

@@ -125,6 +125,7 @@ def main() -> None:
     pd31_files = pd31_keys(pd31_subjects)
 
     for key in pd31_files:
+        # folder name expected by upstream make_pd31.py (DATASET_PATH); the S3 bucket serves ds002778 version 1.0.4
         local_key = key.replace("ds002778", "ds002778-1.0.5", 1)
         download_file(key, root)
         downloaded = root / key

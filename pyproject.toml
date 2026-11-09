@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neurofm-mechinterp"
-version = "0.1.0"
+version = "1.0.0"
 description = "Local mechanistic interpretability tooling for BrainOmni"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,6 +16,7 @@ dependencies = [
   "numpy>=1.26",
   "pandas>=2.2",
   "scipy>=1.13",
+  "scikit-learn>=1.5",
   "seaborn>=0.13",
   "vector-quantize-pytorch>=1.22",
 ]

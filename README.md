@@ -1,7 +1,7 @@
 # neurofm-mechinterp
 
-Code, subject lists and manuscript sources for **"One Anchor per Source: Hyperspherical Geometry and Causal Roles of
-the Latent Sources in an EEG/MEG Foundation-Model Tokenizer"** (Ihor Kendiukhov, 2026).
+Code, subject lists and manuscript sources for **"One anchor per source: Hyperspherical geometry and causal roles of
+the latent sources in an EEG/MEG foundation-model tokenizer"** (Ihor Kendiukhov, 2026).
 
 The paper analyzes the 16 latent sources of the BrainOmni tokenizer, whose residual vector quantizer receives unit
 vectors, in four public OpenNeuro cohorts (EEG and MEG; 316 participants) and in tokenizers trained from scratch. It
@@ -73,7 +73,7 @@ The SHA-256 checksums of the weights are `d41c44c14c3f3b11fd0fb660752e356dff4cb4
 
 ## Reproducing the numbers, tables and figures from the archived results
 
-Release [v1.0.0](https://github.com/Biodyn-AI/neurofm-mechinterp/releases/tag/v1.0.0) has two archives attached that
+Release [v1.1.0](https://github.com/Biodyn-AI/neurofm-mechinterp/releases/tag/v1.1.0) has two archives attached that
 contain every intermediate result the manuscript is generated from (about 2 GB in total):
 
 | archive | contents |

@@ -10,7 +10,8 @@ centered and uncentered principal components, intervenes with edits that preserv
 matched in displacement, dimension and support, and a split of the decoder's attention into keys and values), and
 evaluates the diagnostic content of the sources at the level of subjects with permutation inference.
 
-The compiled manuscript is [`paper/manuscript.pdf`](paper/manuscript.pdf).
+The compiled manuscript is [`paper/manuscript.pdf`](paper/manuscript.pdf) (its figures are in `paper/figures/`), and
+its supporting information is [`paper/S1_Appendix.pdf`](paper/S1_Appendix.pdf).
 
 ---
 
@@ -18,9 +19,9 @@ The compiled manuscript is [`paper/manuscript.pdf`](paper/manuscript.pdf).
 
 ```
 .
-├── paper/                       manuscript source (manuscript.tex, references.bib, highlights.tex,
-│                                tables/operators.tex), the generated numbers.tex, tables/ and figures/, and the
-│                                compiled manuscript.pdf
+├── paper/                       manuscript source (manuscript.tex, S1_Appendix.tex, references.bib,
+│                                tables/operators.tex), the generated numbers.tex, tables/ and figures/ (PDF and
+│                                TIFF), and the compiled manuscript.pdf and S1_Appendix.pdf
 ├── lists/                       analysed subjects and segments of every cohort, and the training / held-out split
 │                                of the tokenizers trained from scratch (written by scripts/export_subject_lists.py)
 ├── src/neurofm_mechinterp/      library: anchors.py (hyperspherical coordinates, sphere-preserving edits, anchor
@@ -87,14 +88,14 @@ shasum -a 256 -c SHA256SUMS.txt
 tar -xzf results_geometry.tar.gz
 tar -xzf results_interventions_readout_tokenizers.tar.gz
 $PY scripts/collect_manuscript_numbers.py     # paper/numbers.tex and paper/tables/*.tex (all but operators.tex)
-$PY scripts/make_manuscript_figures.py        # paper/figures/*.pdf
-$PY scripts/check_manuscript.py               # builds paper/manuscript.pdf (latexmk) and checks it
+$PY scripts/make_manuscript_figures.py        # paper/figures/*.pdf and Fig1.tif ... Fig5.tif
+$PY scripts/check_manuscript.py               # builds paper/manuscript.pdf and paper/S1_Appendix.pdf and checks them
 ```
 
 The collector reads the parameter count from the released BrainTokenizer checkpoint (see Setup). With the package
 versions of `requirements-lock.txt` on macOS, the regenerated numbers, tables and figures are identical to the files
-in the repository, and so is `paper/manuscript.pdf` when it is rebuilt with the same TeX distribution (TeX Live
-2024).
+in the repository, and so are `paper/manuscript.pdf` and `paper/S1_Appendix.pdf` when they are rebuilt with the same TeX
+distribution (TeX Live 2024).
 
 ---
 

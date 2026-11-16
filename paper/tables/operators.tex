@@ -1,14 +1,7 @@
-\begin{table}[tbp]
+\begin{table}[!ht]
+\begin{adjustwidth}{-2.25in}{0in}
 \renewcommand{\baselinestretch}{1}
-\caption{Edits applied to the unit vectors of one source, in the hyperspherical coordinates
-  of \cref{eq:coords} (anchor $\anchor$, anchor coordinate $a=\cos\theta$, tangent direction
-  $\bm{\sigma}\perp\anchor$). Every edit maps unit vectors to unit vectors. $\bm{\sigma}'$ and
-  $\uvec'$ denote the tangent direction and the unit vector at the same position of a segment
-  from another subject; the \emph{support} is the span of the 64 leading tangent axes.
-  Statistics ($\anchor$, $\bar{a}$, tangent axes, mean of the tangent directions) are cross-fitted
-  (\cref{sec:methods-interventions}). Routing: zero-anchor, the anchor swap, tangent resample and
-  tangent-axis resample (4) were also applied only to the input of the decoder's attention keys, or
-  only to that of its values.}
+\caption{{\bf Edits applied to the unit vectors of one source.}}
 \label{tab:operators}
 \centering\footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -36,4 +29,6 @@ collapse             & $\uvec\leftarrow\anchor$                                 
 source resample      & $\uvec\leftarrow\uvec'$                                             & everything \\
 \bottomrule
 \end{tabular}
+\begin{flushleft}\footnotesize In the hyperspherical coordinates of \cref{eq:coords} (anchor $\anchor$, anchor coordinate $a=\cos\theta$, tangent direction $\bm{\sigma}\perp\anchor$). Every edit maps unit vectors to unit vectors. $\bm{\sigma}'$ and $\uvec'$ denote the tangent direction and the unit vector at the same position of a segment from another subject; the \emph{support} is the span of the 64 leading tangent axes. Statistics ($\anchor$, $\bar{a}$, tangent axes, mean of the tangent directions) are cross-fitted (see \nameref{sec:methods-interventions}). Routing: zero-anchor, the anchor swap, tangent resample and tangent-axis resample (4) were also applied only to the input of the decoder's attention keys, or only to that of its values.\end{flushleft}
+\end{adjustwidth}
 \end{table}

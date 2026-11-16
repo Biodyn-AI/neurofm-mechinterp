@@ -1,0 +1,29 @@
+\begin{table}[!ht]
+\renewcommand{\baselinestretch}{1}
+\caption{{\bf Permutation $p$-values of the subject-level read-outs (released tokenizer).}}
+\label{tab:readout-p}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+& \textbf{PD-UCSD} & \textbf{PD-Iowa} & \textbf{Dementia} & \textbf{Dementia} & \textbf{MDD-MEG} \\
+& \textbf{PD vs HC} & \textbf{PD vs HC} & \textbf{AD vs CN} & \textbf{FTD vs CN} & \textbf{MDD vs HV} \\
+\midrule
+anchor-16 & 0.184 & 0.015 & 0.036 & 0.084 & 0.842 \\
+best single anchor & 0.796 & 0.091 & 0.050 & 0.006 & 0.692 \\
+quantized anchor-16 & 0.554 & 0.003 & 0.009 & 0.044 & 0.842 \\
+concentration-16 & 0.554 & 0.003 & 0.016 & 0.023 & 0.842 \\
+norm-16 & 0.554 & 0.006 & 0.005 & 0.006 & 0.842 \\
+pooled & 0.554 & 0.006 & 0.003 & 0.019 & 0.842 \\
+tangent & 0.561 & 0.003 & 0.003 & 0.006 & 0.842 \\
+full & 0.554 & 0.003 & 0.003 & 0.006 & 0.842 \\
+quantized & 0.579 & 0.006 & 0.003 & 0.006 & 0.842 \\
+band power & 0.554 & 0.003 & 0.003 & 0.006 & 0.842 \\
+anchor-16, adjusted & 0.094 & 0.004 & 0.046 & 0.030 & 0.521 \\
+full, adjusted & 0.339 & 0.002 & 0.004 & 0.002 & 0.533 \\
+band power, adjusted & 0.399 & 0.002 & 0.002 & 0.002 & 0.301 \\
+age and sex & 0.878 & 0.046 & 0.090 & 0.126 & 0.040 \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}\footnotesize These are the $p$-values behind the markers of Table~\ref{main-tab:readout} of the main text: anchor-16, Holm-corrected across the five contrasts (1000 permutations); secondary representations, Benjamini--Hochberg-corrected within each contrast (500 permutations); best single anchor (1000 permutations), adjusted representations and age and sex (500 permutations), uncorrected. One-sided tests of an AUC above chance.\end{flushleft}
+\end{table}

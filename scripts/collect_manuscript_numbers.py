@@ -99,6 +99,26 @@ def setm(name: str, value: str) -> None:
     MACROS[name] = value
 
 
+def plos_table(lines: list[str], split: str, wide: bool = True) -> str:
+    """PLOS layout of a table whose `lines` hold the caption above the tabular: the caption up to `split` becomes the
+    bold title above the table and the rest a legend below it; wide tables span the full page width of the PLOS template."""
+    text = "\n".join(lines)
+    head = text.index(r"\caption{")
+    start = end = head + len(r"\caption{")
+    depth = 1
+    while depth:
+        depth += {"{": 1, "}": -1}.get(text[end], 0)
+        end += 1
+    title, legend = text[start:end - 1].split(split, 1)
+    legend = legend[0].upper() + legend[1:]
+    text = text[:head] + r"\caption{{\bf " + title.rstrip(".") + ".}}" + text[end:]
+    text = text.replace(r"\end{tabular}", r"\end{tabular}" + "\n" + r"\begin{flushleft}\footnotesize " + legend + r"\end{flushleft}", 1)
+    if wide and text.startswith(r"\begin{table}"):
+        text = text.replace(r"\begin{table}[tbp]", r"\begin{table}[!ht]" + "\n" + r"\begin{adjustwidth}{-2.25in}{0in}", 1)
+        text = text.replace(r"\end{table}", r"\end{adjustwidth}" + "\n" + r"\end{table}", 1)
+    return text + "\n"
+
+
 def cohort_runs(subdir: Path, filename: str, suffix: str = "") -> dict[str, dict]:
     out = {}
     for key, _ in COHORTS:
@@ -167,7 +187,7 @@ def cohort_numbers() -> None:
         lines.append(f"{label} & {cohort.accession} & {RECORDING[cohort.name]} & {summary['channels']} & {summary['subjects']} & "
                      + f"{summary['segments']:,}".replace(",", "{,}") + f" & {group_text} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-    (TAB_DIR / "cohorts.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "cohorts.tex").write_text(plos_table(lines, ". "))
 
 
 # ----------------------------------------------------------------------------- geometry
@@ -275,13 +295,13 @@ def geometry_numbers() -> None:
     lines = [r"\begin{table}[tbp]", r"\renewcommand{\baselinestretch}{1}",
              r"\caption{Geometry of the per-source unit vectors (released tokenizer); ranges over the 16 sources. "
              r"$\Rbar$: mean resultant length; colat.: mean colatitude; $\cos(\anchor,\bm{v}_1)$: anchor versus leading "
-             r"uncentered direction; bound: residual bound~\eqref{eq:residual-bound} on $\sin\angle(\anchor,\bm{v}_1)$; "
+             r"uncentered direction; bound: residual bound of \cref{eq:residual-bound} on $\sin\angle(\anchor,\bm{v}_1)$; "
              r"$|\cos(\anchor,\mathrm{PC}_k)|$: largest absolute cosine with the ten leading centered PCs; "
              r"$\|P_{16}\anchor\|^2$: squared norm of the anchor in the span of the 16 leading centered PCs; var.: share of "
              r"the centered variance along the anchor (rank among the centered eigenvalues); PR: participation ratio of the "
              r"centered covariance, $(\operatorname{tr}\Sigma_s)^2/\operatorname{tr}(\Sigma_s^2)$. "
              r"Upper limits ($\leq$) are rounded up and lower limits ($\geq$) down. Per-source values, with a bootstrap interval for "
-             r"$\Rbar$, are given in \cref{app:tables}.}",
+             r"$\Rbar$, are given in Tables A--D in S1 Appendix.}",
              r"\label{tab:geometry}", r"\centering\scriptsize", r"\setlength{\tabcolsep}{2.6pt}",
              r"\begin{tabular}{@{}lcccccccc@{}}", r"\toprule",
              r"\textbf{cohort} & $\Rbar$ & \textbf{colat.}\,($^\circ$) & $\cos(\anchor,\bm{v}_1)$ & \textbf{bound} & "
@@ -301,7 +321,7 @@ def geometry_numbers() -> None:
             f"({f(r['anchor_variance_rank'][0], 0)}--{f(r['anchor_variance_rank'][1], 0)}) & "
             f"{f(r['participation_ratio'][0], 0)}--{f(r['participation_ratio'][1], 0)} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-    (TAB_DIR / "geometry.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "geometry.tex").write_text(plos_table(lines, "; "))
 
     # edits applied off the sphere: what the quantizer's normalization leaves of them
     effects = [off_sphere_effects(key) for key in geo]
@@ -431,18 +451,18 @@ def token_numbers() -> None:
             ("perplexity, level 1", lambda t: f(t["usage"][0]["per_source_perplexity_median"], 0)),
             ("perplexity, levels 2--4", lambda t: "--".join(f(x, 0) for x in (min(u["per_source_perplexity_median"] for u in t["usage"][1:]), max(u["per_source_perplexity_median"] for u in t["usage"][1:])))),
             ("codeword--anchor cosine", lambda t: f(t["level1_alignment_summary"]["own_anchor_cos_median"], 2)),
-            (r"\midrule level-1 codes changed by", None)]
+            ("level-1 codes changed by", None)]
     for label, fn in rows:
-        if fn is None:
-            lines.append(label + " & " * len(labels) + r" \\")
+        if fn is None:          # subheading spanning the table (PLOS: no indentation by spaces)
+            lines.append(r"\midrule \multicolumn{" + str(1 + len(labels)) + r"}{@{}l}{\emph{" + label + r"}} \\")
             continue
         lines.append(label + " & " + " & ".join(fn(have[k]) for k, _ in COHORTS if k in have) + r" \\")
     for edit, label in TOKEN_EDITS:
         cells = [f"{pct(have[k]['code_change'][edit]['level1_median'])}\\% ({pct(have[k]['code_change'][edit]['foreign_share_median'])}\\%)"
                  for k, _ in COHORTS if k in have]
-        lines.append(r"\quad " + label + " & " + " & ".join(cells) + r" \\")
+        lines.append(label + " & " + " & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-    (TAB_DIR / "tokens.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "tokens.tex").write_text(plos_table(lines, ". "))
 
 
 # ----------------------------------------------------------------------------- interventions
@@ -455,7 +475,8 @@ NEC_EDITS = [("zero_anchor", "zero-anchor"), ("half_anchor", "half-anchor"), ("m
              ("rand_support_16", "random-support resample (16)"), ("rand_off_16", "random resample (16)"),
              ("tangent_resample", "tangent resample"), ("swap", "anchor swap (three partners)"),
              ("zero_anchor_keys", "zero-anchor, keys only"), ("zero_anchor_values", "zero-anchor, values only"),
-             ("swap_p0", "anchor swap (first partner)"), ("swap_keys", "\\quad keys only"), ("swap_values", "\\quad values only"),
+             ("swap_p0", "anchor swap (first partner)"), ("swap_keys", "anchor swap (first partner), keys only"),
+             ("swap_values", "anchor swap (first partner), values only"),
              ("source_resample", "source resample")]
 
 
@@ -648,7 +669,7 @@ def necessity_numbers() -> None:
             cells.append(f"{tnum(pct(e['median'], nd))} [{tnum(pct(lo, nd))},\\,{tnum(pct(hi, nd))}] ({n['n_above_zero']}/{n['n_below_zero']})")
         lines.append(f"{label} & " + " & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{sidewaystable}"]
-    (TAB_DIR / "necessity.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "necessity.tex").write_text(plos_table(lines, ", "))
 
 
 # ----------------------------------------------------------------------------- diagnosis
@@ -703,6 +724,7 @@ def readout_numbers() -> None:
         setm(f"Rand{tag}Range", f"{f(null['q025'], 2)}--{f(null['q975'], 2)}")
         setm(f"Rand{tag}GePct", pct(null["fraction_ge_anchor16"]))
         mc_p[tag] = (1 + round(null["fraction_ge_anchor16"] * null["n"])) / (1 + null["n"])
+        setm(f"Rand{tag}MCP", f"{mc_p[tag]:.3f}")
     if mc_p:
         setm("RandMCPMin", f"{min(mc_p.values()):.3f}")
     setm("NumContrasts", WORDS[len(tags)])
@@ -740,12 +762,12 @@ def readout_numbers() -> None:
              r"$p<0.05$ (anchor-16: Holm-corrected across contrasts; secondary representations: Benjamini--Hochberg-corrected "
              r"within contrast; best single anchor, adjusted representations and age and sex: uncorrected). The permutation tests "
              r"use the pipeline with the inverse regularization strength fixed at 1 and two repetitions "
-             r"(\cref{sec:methods-readout}), whose statistic differs from the AUC shown by at most \PermStatMaxDiff, "
+             r"(see \nameref{sec:methods-readout}), whose statistic differs from the AUC shown by at most \PermStatMaxDiff, "
              r"so a marked AUC can have an interval that includes 0.5. Best single anchor: "
              r"the anchor coordinate whose AUC on the training subjects is farthest from 0.5, selected inside every training fold "
              r"and evaluated out of fold (per-source results are given in the text); adjusted: age and sex regressed out within "
              r"training folds. Last row: AUC range (2.5--97.5\% quantiles) of 100 random 16-direction representations evaluated "
-             r"like anchor-16.}",
+             r"like anchor-16. Exact $p$-values: Table E in S1 Appendix.}",
              r"\label{tab:readout}", r"\centering\scriptsize", r"\setlength{\tabcolsep}{2pt}",
              r"\begin{tabular}{l" + "c" * len(tags) + "}", r"\toprule",
              r"& " + " & ".join(f"\\textbf{{{c[2].split(', ')[0]}}}" for c in CONTRASTS if c[3] in res) + r" \\",
@@ -765,7 +787,28 @@ def readout_numbers() -> None:
     lines.append(r"\midrule random 16 directions & " + " & ".join(
         f"{f(res[t]['random16_null']['q025'], 2)}--{f(res[t]['random16_null']['q975'], 2)}" for t in tags) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{sidewaystable}"]
-    (TAB_DIR / "readout.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "readout.tex").write_text(plos_table(lines, ": "))
+    # exact p-values behind the markers of the read-out table (S1 Appendix, Table E)
+    lines = [r"\begin{table}[!ht]", r"\renewcommand{\baselinestretch}{1}",
+             r"\caption{Permutation $p$-values of the subject-level read-outs (released tokenizer). These are the $p$-values "
+             r"behind the markers of Table~\ref{main-tab:readout} of the main text: anchor-16, Holm-corrected across the five "
+             r"contrasts (1000 permutations); secondary representations, Benjamini--Hochberg-corrected within each contrast "
+             r"(500 permutations); best single anchor (1000 permutations), adjusted representations and age and sex (500 "
+             r"permutations), uncorrected. One-sided tests of an AUC above chance.}",
+             r"\label{tab:readout-p}", r"\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}",
+             r"\begin{tabular}{l" + "c" * len(tags) + "}", r"\toprule",
+             r"& " + " & ".join(f"\\textbf{{{c[2].split(', ')[0]}}}" for c in CONTRASTS if c[3] in res) + r" \\",
+             r"& " + " & ".join(f"\\textbf{{{c[2].split(', ')[1]}}}" for c in CONTRASTS if c[3] in res) + r" \\",
+             r"\midrule"]
+    for feat, label in READOUT_ROWS:
+        cells = []
+        for tag in tags:
+            e = {x["feature"]: x for x in res[tag]["results"]}.get(feat)
+            p = None if e is None else holm[tag] if feat == "anchor16" else e.get("perm_p_fdr", e.get("perm_p"))
+            cells.append("--" if p is None else f"{p:.3f}" if p >= 0.001 else "$<$0.001")
+        lines.append(label + " & " + " & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    (TAB_DIR / "readout_pvalues.tex").write_text(plos_table(lines, ". ", wide=False))
 
 
 TRANSFER_FEATURES = (("anchor16", "Anchor"), ("bandpower_shared", "Band"), ("full4096", "Full"), ("tangent4096", "Tangent"),
@@ -874,7 +917,7 @@ def transfer_table(data: dict) -> None:
                           str(round(r["random16_fraction_ge"] * n))]
             lines.append(f"{label} & " + " & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-    (TAB_DIR / "transfer.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "transfer.tex").write_text(plos_table(lines, ": "))
 
 
 # ----------------------------------------------------------------------------- replication
@@ -1054,7 +1097,7 @@ def replication_numbers() -> None:
         i_cell = "--" if not t else cell_range([x["usage"][0]["mi_bits"] for x in t.values()], 2)
         lines.append(f"{label} & {mse_cell} & {r_cell} & {c_cell} & {z_cell} & {k_cell} & {v_cell} & {i_cell} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-    (TAB_DIR / "replication.tex").write_text("\n".join(lines) + "\n")
+    (TAB_DIR / "replication.tex").write_text(plos_table(lines, ": "))
     for key, name in (("pd_ucsd", "UCSD"), ("pd_iowa", "Iowa"), ("dementia", "Dementia"), ("mdd_meg", "MEG")):
         held = load_json(REPLICAS / f"heldout_{key}.json")
         setm(f"RepHeldOut{name}", str(len(held)) if held is not None else placeholder(f"RepHeldOut{name}"))
@@ -1221,8 +1264,8 @@ def supplementary_tables() -> None:
         ratios = atl["ratios"]
         lines = [r"\begin{table}[p]", r"\renewcommand{\baselinestretch}{1}",
                  f"\\caption{{Per-source values, {label} (released tokenizer). $\\Rbar$ with 95\\% subject-cluster bootstrap interval; "
-                 r"colat.: mean colatitude; $\sin\angle(\anchor,\bm{v}_1)$ with the residual bound~\eqref{eq:residual-bound}; "
-                 r"$\|P_{16}\anchor\|^2$ as in \cref{tab:geometry}; var.: share of the centered variance along the anchor; "
+                 r"colat.: mean colatitude; $\sin\angle(\anchor,\bm{v}_1)$ with the residual bound of Eq~(\ref{main-eq:residual-bound}) "
+                 r"in the main text; $\|P_{16}\anchor\|^2$ as in Table~\ref{main-tab:geometry} of the main text; var.: share of the centered variance along the anchor; "
                  r"$\dmse$ in percent of the unedited error for zero-anchor (ZA), colatitude $+20^\circ$ (C+), mean-anchor (MA), "
                  r"matched rotation in the support (MR) and tangent resample (TR); K: share of the zero-anchor damage reproduced "
                  r"through the decoder's keys alone, relative to the damage of the full edit.}",
@@ -1241,8 +1284,8 @@ def supplementary_tables() -> None:
                 f"{tnum(pct(rel['rot_matched_on']['per_source'][s], 1))} & {tnum(pct(rel['tangent_resample']['per_source'][s], 1))} & "
                 f"{f(ratios['keys_over_zero']['per_source'][s], 2)} \\\\")
         lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
-        parts.append("\n".join(lines))
-    (TAB_DIR / "supplementary.tex").write_text("\n\n".join(parts) + "\n")
+        parts.append(plos_table(lines, ". ", wide=False))
+    (TAB_DIR / "supplementary.tex").write_text("\n".join(parts))
 
 
 def main() -> None:
@@ -1262,7 +1305,7 @@ def main() -> None:
     # analyses that have not finished yet: a visible placeholder for every capitalized macro the text uses that is
     # neither collected here nor defined in the manuscript (LaTeX's own capitalized commands are listed explicitly)
     tex = (OUT_DIR / "manuscript.tex").read_text()
-    latex_commands = {"Cref", "Crefformat", "FloatBarrier", "Delta", "Sigma", "Theta", "Gamma", "Lambda", "Omega", "Phi", "Psi", "Pi"}
+    latex_commands = {"Cref", "Crefformat", "Crefname", "DisableLigatures", "Large", "FloatBarrier", "Delta", "Sigma", "Theta", "Gamma", "Lambda", "Omega", "Phi", "Psi", "Pi"}
     defined = set(re.findall(r"\\(?:re)?newcommand\{\\([A-Za-z]+)\}", tex)) | latex_commands
     for name in sorted(set(re.findall(r"\\([A-Z][A-Za-z]+)", tex)) - set(MACROS) - defined):
         setm(name, placeholder(name))

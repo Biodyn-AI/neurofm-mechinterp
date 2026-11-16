@@ -1,0 +1,116 @@
+%% S1 Appendix of "One anchor per source: Hyperspherical geometry and causal roles of the latent sources in an
+%% EEG/MEG foundation-model tokenizer": proof of Proposition 1, per-source values (Tables A-D) and read-out p-values (Table E).
+%% References to the main text (labels prefixed main-) are read from manuscript.aux: compile manuscript.tex first, then
+%% latexmk -pdf -bibtex S1_Appendix.tex
+\documentclass[10pt,letterpaper]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{url}
+\providecommand{\href}[2]{#2}   % references print DOIs with \href; no links in this document
+\usepackage{xr}
+\externaldocument[main-]{manuscript}
+\usepackage{booktabs}
+\setlength{\abovetopsep}{3pt}
+\usepackage{array}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage[aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off]{caption}
+\usepackage[capitalize,noabbrev]{cleveref}
+\renewcommand{\thetable}{\Alph{table}}
+\bibliographystyle{plos2025}
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+
+\newcommand{\dmse}{\ensuremath{\Delta\mathrm{MSE}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Rbar}{\bar{R}}
+\newcommand{\anchor}{\bm{p}}
+\newcommand{\uvec}{\bm{u}}
+\newcommand{\tvec}{\bm{t}}
+\input{numbers.tex}
+
+\begin{document}
+
+\section*{S1 Appendix. Proof of Proposition 1, per-source values and read-out $p$-values}
+
+Supporting information for ``One anchor per source: Hyperspherical geometry and causal roles of the latent
+sources in an EEG/MEG foundation-model tokenizer''. Propositions, equations and numbered tables refer to the
+main text.
+
+\subsection*{Proof of Proposition 1}
+
+Write $\anchor=\anchor_s$, $M=M_s$, $\Sigma=\Sigma_s$, $\bm{\mu}=\bm{\mu}_s$,
+$\bm{\gamma}=\bm{\gamma}_s$ and $\Rbar=\Rbar_s$, and decompose $\uvec=a\anchor+\tvec$ with
+$\tvec\perp\anchor$.
+
+\emph{(i)} Because $\E[a]=\langle\bm{\mu},\anchor\rangle=\Rbar$ and $\bm{\mu}=\Rbar\anchor$,
+the tangent part has mean $\E[\tvec]=\bm{\mu}-\E[a]\anchor=\bm{0}$. Hence
+$\bm{\gamma}=\operatorname{Cov}(a,\tvec)=\E[a\tvec]$, which is orthogonal to $\anchor$ because
+every $\tvec$ is. Then
+$M\anchor=\E[\uvec\langle\uvec,\anchor\rangle]=\E[(a\anchor+\tvec)\,a]
+=\E[a^{2}]\,\anchor+\bm{\gamma}$, and $\anchor^{\top}M\anchor=\E[a^{2}]$ because
+$\bm{\gamma}\perp\anchor$. Since $\bm{\gamma}$ is orthogonal to $\anchor$, $M\anchor$ is parallel
+to $\anchor$ if and only if $\bm{\gamma}=\bm{0}$.
+
+\emph{(ii)} Let $\rho=\E[a^{2}]$. Since $\lambda_1\geq\anchor^{\top}M\anchor=\rho>\lambda_2$, the
+eigenvalue $\lambda_1$ is simple and $\bm{v}_1$ is unique up to sign. By (i), the residual of $\anchor$ as an approximate
+eigenvector of $M$ is $\bm{r}=M\anchor-\rho\anchor=\bm{\gamma}$. Write
+$\anchor=\cos\varphi\,\bm{v}_1+\sin\varphi\,\bm{w}$ with $\varphi=\angle(\bm{v}_1,\anchor)$
+and a unit vector $\bm{w}$ in the span of the eigenvectors $\bm{v}_2,\bm{v}_3,\dots$ of $M$.
+Because $M$ maps that span into itself,
+\[
+  \lVert\bm{r}\rVert^{2}=\cos^{2}\!\varphi\,(\lambda_1-\rho)^{2}
+  +\sin^{2}\!\varphi\,\lVert(M-\rho I)\bm{w}\rVert^{2}
+  \;\geq\;\sin^{2}\!\varphi\,(\rho-\lambda_2)^{2},
+\]
+since every eigenvalue $\lambda_i$, $i\geq2$, satisfies $\lambda_i\leq\lambda_2<\rho$ and
+hence $|\lambda_i-\rho|\geq\rho-\lambda_2$. Taking square roots gives
+$\sin\varphi\leq\lVert\bm{\gamma}\rVert/(\rho-\lambda_2)$, the residual form of the
+Davis--Kahan $\sin\Theta$ theorem~\cite{davis1970rotation}.
+
+\emph{(iii)} By Weyl's inequality for the sum $M=\bm{\mu}\bm{\mu}^{\top}+\Sigma$,
+$\lambda_2(M)\leq\lambda_2(\bm{\mu}\bm{\mu}^{\top})+\lambda_1(\Sigma)=
+\lVert\Sigma\rVert_{\mathrm{op}}$, because the rank-one matrix $\bm{\mu}\bm{\mu}^{\top}$ has
+second eigenvalue zero. Replacing $\lambda_2$ by the larger
+$\lVert\Sigma\rVert_{\mathrm{op}}$ in the denominator of (ii) can only increase the bound.
+
+\emph{(iv)} For every unit vector $\bm{y}$, the Cauchy--Schwarz inequality gives
+$\langle\bm{\gamma},\bm{y}\rangle=\E[(a-\Rbar)\langle\tvec,\bm{y}\rangle]
+\leq\sqrt{\operatorname{Var}(a)}\,\sqrt{\operatorname{Var}\langle\tvec,\bm{y}\rangle}$. The
+tangent part is $\tvec=P\uvec$ with the orthogonal projection $P=I-\anchor\anchor^{\top}$, so
+$\operatorname{Var}\langle\tvec,\bm{y}\rangle=(P\bm{y})^{\top}\Sigma\,(P\bm{y})
+\leq\lVert\Sigma\rVert_{\mathrm{op}}$. Choosing $\bm{y}=\bm{\gamma}/\lVert\bm{\gamma}\rVert$
+gives $\lVert\bm{\gamma}\rVert\leq\sqrt{\operatorname{Var}(a)\,\lVert\Sigma\rVert_{\mathrm{op}}}$.
+
+\emph{(v)} Taking the trace of $M=\bm{\mu}\bm{\mu}^{\top}+\Sigma$ and using
+$\operatorname{tr}M=\E\lVert\uvec\rVert^{2}=1$ gives $\operatorname{tr}\Sigma=1-\Rbar^{2}$.
+Finally, $\bm{\mu}\bm{\mu}^{\top}\anchor=\Rbar^{2}\anchor$, so by (i)
+$\Sigma\anchor=M\anchor-\Rbar^{2}\anchor=(\E[a^{2}]-\Rbar^{2})\,\anchor+\bm{\gamma}
+=\operatorname{Var}(a)\,\anchor+\bm{\gamma}$, using $\E[a]=\Rbar$; because
+$\bm{\gamma}\perp\anchor$, $\anchor^{\top}\Sigma\anchor=\operatorname{Var}(a)$. \hfill$\square$
+
+\subsection*{Per-source values}
+
+Tables A--D give the geometry of every source of the four cohorts together with the change in
+reconstruction error under the main edits.
+
+\input{tables/supplementary.tex}
+\clearpage
+
+\subsection*{Read-out $p$-values}
+
+Table E gives the exact permutation $p$-values behind the markers of the read-out table of the main text.
+
+\input{tables/readout_pvalues.tex}
+\clearpage
+
+\bibliography{references}
+
+\end{document}

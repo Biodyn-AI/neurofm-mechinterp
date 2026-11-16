@@ -1,6 +1,6 @@
 \begin{sidewaystable}
 \renewcommand{\baselinestretch}{1}
-\caption{Change in reconstruction error under each edit, in percent of the unedited mean squared error (median over the 16 sources of the subject-mean change, with a 95\% subject-cluster bootstrap interval), and numbers of sources (out of 16) whose bootstrap interval of the subject-mean $\dmse$ lies above / below zero, released tokenizer; cells in which any of the three values is below 0.1\% in magnitude are given with two decimals. Edits are defined in \cref{tab:operators}; the median unedited errors of the edited segments (on the evaluated sensors) were PD-UCSD 0.39, PD-Iowa 0.40, Dementia 0.31, MDD-MEG 0.33.}
+\caption{{\bf Change in reconstruction error under each edit.}}
 \label{tab:necessity}
 \centering\scriptsize
 \setlength{\tabcolsep}{1.5pt}
@@ -30,9 +30,10 @@ anchor swap (three partners) & 7.9 [7.2,\,8.3] (16/0) & 6.7 [6.3,\,7.3] (16/0) &
 zero-anchor, keys only & 4.4 [4.0,\,4.9] (16/0) & 3.4 [3.1,\,3.7] (16/0) & 6.0 [5.5,\,6.5] (16/0) & 7.9 [7.5,\,8.4] (16/0) \\
 zero-anchor, values only & 1.1 [1.0,\,1.2] (16/0) & 0.9 [0.8,\,1.0] (16/0) & 0.7 [0.6,\,0.8] (16/0) & 1.1 [1.1,\,1.2] (16/0) \\
 anchor swap (first partner) & 8.4 [7.6,\,9.2] (16/0) & 6.5 [6.0,\,7.2] (16/0) & 11.4 [10.3,\,12.6] (16/0) & 13.7 [12.5,\,14.6] (16/0) \\
-\quad keys only & 8.5 [7.7,\,9.2] (16/0) & 6.5 [6.0,\,7.2] (16/0) & 11.3 [10.2,\,12.7] (16/0) & 13.8 [12.6,\,14.6] (16/0) \\
-\quad values only & 0.08 [0.04,\,0.12] (8/1) & 0.09 [0.05,\,0.11] (9/3) & 0.07 [0.04,\,0.12] (4/1) & 0.08 [0.05,\,0.10] (11/0) \\
+anchor swap (first partner), keys only & 8.5 [7.7,\,9.2] (16/0) & 6.5 [6.0,\,7.2] (16/0) & 11.3 [10.2,\,12.7] (16/0) & 13.8 [12.6,\,14.6] (16/0) \\
+anchor swap (first partner), values only & 0.08 [0.04,\,0.12] (8/1) & 0.09 [0.05,\,0.11] (9/3) & 0.07 [0.04,\,0.12] (4/1) & 0.08 [0.05,\,0.10] (11/0) \\
 source resample & 10.3 [9.0,\,11.7] (16/0) & 8.8 [8.2,\,9.5] (16/0) & 13.2 [12.2,\,14.6] (16/0) & 16.2 [15.3,\,17.2] (16/0) \\
 \bottomrule
 \end{tabular}
+\begin{flushleft}\footnotesize In percent of the unedited mean squared error (median over the 16 sources of the subject-mean change, with a 95\% subject-cluster bootstrap interval), and numbers of sources (out of 16) whose bootstrap interval of the subject-mean $\dmse$ lies above / below zero, released tokenizer; cells in which any of the three values is below 0.1\% in magnitude are given with two decimals. Edits are defined in \cref{tab:operators}; the median unedited errors of the edited segments (on the evaluated sensors) were PD-UCSD 0.39, PD-Iowa 0.40, Dementia 0.31, MDD-MEG 0.33.\end{flushleft}
 \end{sidewaystable}

@@ -1,22 +1,25 @@
-"""Figures of the manuscript, generated from results/ (PDF, vector).
+"""Figures of the manuscript, generated from results/: a vector PDF and the TIFF file uploaded to PLOS.
 
-Every figure is drawn at the width at which it is printed (the 390-pt text width), so that no text is
-smaller than 7 pt on paper.
+Every figure is drawn 5.4 in wide with text of at least 7 pt (Arial). The TIFF file (Fig<n>.tif, numbered in
+the order in which the manuscript cites the figures) is RGB with LZW compression at 600 dpi and is supplied at
+8/7 of the drawing size, so that its smallest text is 8 pt, as PLOS requires (8-12 pt; width at most 7.5 in).
 
-fig_overview.pdf     (a) the tokenizer and the two pathways of the decoder's attention, (b) hyperspherical
-                     coordinates of the unit vectors of one source
-fig_geometry.pdf     (a) mean resultant length per source, (b) anchor vs uncentered and centered principal
-                     directions, (c) per-source anchor agreement between cohorts
-fig_interventions.pdf (a) damage vs geodesic displacement for families of edits, (b) colatitude tuning,
-                     (c) share of the damage of location, identity and content edits reproduced through the
-                     decoder's keys or values alone
-fig_readout.pdf      subject-level AUC of each representation per contrast and for cross-site transfer, with the
-                     random-direction null
-fig_replication.pdf  key quantities for every tokenizer instance (geometry, anchor arrangement, interventions, tokens)
+Fig1, fig_overview.pdf     (A) the tokenizer and the two pathways of the decoder's attention, (b) hyperspherical
+                           coordinates of the unit vectors of one source
+Fig2, fig_geometry.pdf     (A) mean resultant length per source, (B) anchor vs uncentered and centered principal
+                           directions, (C) per-source anchor agreement between cohorts
+Fig3, fig_interventions.pdf (A) damage vs geodesic displacement for families of edits, (B) colatitude tuning,
+                           (C) share of the damage of location, identity and content edits reproduced through the
+                           decoder's keys or values alone
+Fig4, fig_replication.pdf  key quantities for every tokenizer instance (geometry, anchor arrangement, interventions,
+                           tokens)
+Fig5, fig_readout.pdf      subject-level AUC of each representation per contrast and for cross-site transfer, with the
+                           random-direction null
 """
 
 from __future__ import annotations
 
+import io
 import json
 
 import matplotlib
@@ -26,6 +29,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import torch  # noqa: E402
+from PIL import Image  # noqa: E402
 
 from neurofm_mechinterp.anchors import anchor_arrangement  # noqa: E402
 from neurofm_mechinterp.paths import REPO_ROOT, RESULTS_ROOT  # noqa: E402
@@ -41,14 +45,18 @@ GEOM = RESULTS_ROOT / "source_geometry"
 ATLAS = RESULTS_ROOT / "necessity_atlas"
 READOUT = RESULTS_ROOT / "diagnostic_readout"
 
-WIDTH = 5.4               # inches: the manuscript's text width (390 pt), at which every figure is printed
+WIDTH = 5.4               # inches: drawing width of every figure
+TIFF_DPI = 600            # PLOS: 300-600 dpi
+TIFF_SCALE = 8 / 7        # supplied size / drawing size: the smallest text (7 pt) becomes 8 pt
 plt.rcParams.update({
-    "font.family": "DejaVu Sans", "font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8,
+    "font.family": "sans-serif", "font.sans-serif": ["Arial", "Liberation Sans", "DejaVu Sans"],
+    "mathtext.fontset": "custom", "mathtext.rm": "Arial", "mathtext.it": "Arial:italic",
+    "mathtext.bf": "Arial:bold", "mathtext.bfit": "Arial:italic:bold", "font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8,
     "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7, "axes.edgecolor": INK2,
     "axes.labelcolor": INK, "xtick.color": INK2, "ytick.color": INK2, "text.color": INK,
     "axes.spines.top": False, "axes.spines.right": False, "axes.linewidth": 0.6,
     "xtick.major.width": 0.6, "ytick.major.width": 0.6, "legend.frameon": False,
-    "pdf.fonttype": 42, "savefig.bbox": "tight", "savefig.pad_inches": 0.02,
+    "pdf.fonttype": 42, "savefig.bbox": "tight", "savefig.pad_inches": 0.03,
 })
 
 
@@ -58,7 +66,15 @@ def style(ax, grid_axis: str = "y") -> None:
 
 
 def panel(ax, letter: str, x: float = -0.16, y: float = 1.04) -> None:
-    ax.text(x, y, letter, transform=ax.transAxes, fontsize=9, fontweight="bold", va="bottom")
+    ax.text(x, y, letter.upper(), transform=ax.transAxes, fontsize=9, fontweight="bold", va="bottom")
+
+
+def save(fig, name: str, number: int) -> None:
+    """<name>.pdf (vector; no date, so byte-reproducible) and Fig<number>.tif for PLOS (RGB, LZW, TIFF_DPI)."""
+    fig.savefig(OUT / f"{name}.pdf", metadata={"CreationDate": None})
+    buffer = io.BytesIO()
+    fig.savefig(buffer, format="png", dpi=TIFF_DPI * TIFF_SCALE)
+    Image.open(buffer).convert("RGB").save(OUT / f"Fig{number}.tif", compression="tiff_lzw", dpi=(TIFF_DPI, TIFF_DPI))
 
 
 def load(path):
@@ -117,9 +133,9 @@ def fig_overview() -> None:
     _arrow(ax, xc, top + height + 0.10, xc, top + height + 0.012)
     # decoder: the quantized sources enter the decoder's attention as keys and values
     x_vq = 4 * step + width / 2
-    _box(ax, 0.40, 0.02, 0.30, 0.38, "decoder attention\nquery: sensor embedding\nkeys $\\leftarrow$ $\\boldsymbol{q}_s$\n"
-         "values $\\leftarrow$ $\\boldsymbol{q}_s$")
-    _box(ax, 0.77, 0.07, 0.23, 0.28, "SEANet decoder\nper sensor\n$\\rightarrow$ reconstruction")
+    _box(ax, 0.40, 0.02, 0.30, 0.38, "decoder attention\nquery: sensor embedding\nkeys ← $\\boldsymbol{q}_s$\n"
+         "values ← $\\boldsymbol{q}_s$")
+    _box(ax, 0.77, 0.07, 0.23, 0.28, "SEANet decoder\nper sensor\n→ reconstruction")
     _arrow(ax, x_vq, top, x_vq, 0.465, style="-")
     _arrow(ax, x_vq, 0.465, 0.55, 0.465, style="-")
     _arrow(ax, 0.55, 0.465, 0.55, 0.40)
@@ -160,13 +176,13 @@ def fig_overview() -> None:
 
     ax = fig.add_subplot(grid[1, 1])
     ax.axis("off")
-    ax.text(0.0, 0.80, "$\\boldsymbol{u}=a\\,\\boldsymbol{p}_s+\\sqrt{1-a^{2}}\\;\\boldsymbol{\\sigma}$", fontsize=9, va="center")
+    ax.text(0.0, 0.80, "$\\boldsymbol{u}$ = $a\\,\\boldsymbol{p}_s$ + √(1 − $a^{2}$) $\\boldsymbol{\\sigma}$", fontsize=9, va="center")
     for y, line in ((0.58, "$\\boldsymbol{p}_s$: anchor (normalized mean of the vectors)"),
                     (0.44, "$\\theta$: colatitude (angle to the anchor)"),
                     (0.30, "$a=\\cos\\theta$: anchor coordinate"),
-                    (0.16, "$\\boldsymbol{\\sigma}\\perp\\boldsymbol{p}_s$: tangent direction (unit vector)")):
+                    (0.16, "$\\boldsymbol{\\sigma}$: tangent direction (unit vector orthogonal to $\\boldsymbol{p}_s$)")):
         ax.text(0.0, y, line, fontsize=7.5, va="center")
-    fig.savefig(OUT / "fig_overview.pdf", metadata={"CreationDate": None})  # no date: byte-reproducible
+    save(fig, "fig_overview", 1)
     plt.close(fig)
 
 
@@ -237,7 +253,7 @@ def fig_geometry() -> None:
                   loc="lower left", handletextpad=0.2, borderaxespad=0.2)
         style(ax)
     panel(ax, "c", x=-0.3, y=1.02)
-    fig.savefig(OUT / "fig_geometry.pdf", metadata={"CreationDate": None})  # no date: byte-reproducible
+    save(fig, "fig_geometry", 2)
     plt.close(fig)
 
 
@@ -353,7 +369,7 @@ def fig_interventions() -> None:
     ax.set_ylabel("share of full-edit damage")
     style(ax)
     panel(ax, "c", x=-0.22, y=1.02)
-    fig.savefig(OUT / "fig_interventions.pdf", metadata={"CreationDate": None})  # no date: byte-reproducible
+    save(fig, "fig_interventions", 3)
     plt.close(fig)
 
 
@@ -424,7 +440,7 @@ def fig_readout() -> None:
         Patch(facecolor=GRID, edgecolor="none", label="random 16 directions\n(2.5\u201397.5%)"),
         Line2D([], [], color=INK2, linewidth=0.6, linestyle=(0, (2, 2)), label="chance")]
     axes[used].legend(handles=handles, loc="center left", borderaxespad=0.0, handletextpad=0.4, labelspacing=0.6)
-    fig.savefig(OUT / "fig_readout.pdf", metadata={"CreationDate": None})  # no date: byte-reproducible
+    save(fig, "fig_readout", 5)
     plt.close(fig)
 
 
@@ -480,7 +496,7 @@ def fig_replication() -> None:
         axes[row * n_cols].tick_params(labelleft=True)
     axes[len(panels)].legend(handles=cohort_handles([k for k, _ in COHORTS if k in set(t["cohort"])]), loc="center left",
                              borderaxespad=0.0, labelspacing=0.6)
-    fig.savefig(OUT / "fig_replication.pdf", metadata={"CreationDate": None})  # no date: byte-reproducible
+    save(fig, "fig_replication", 4)
     plt.close(fig)
 
 

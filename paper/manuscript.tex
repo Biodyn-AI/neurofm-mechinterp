@@ -82,7 +82,6 @@
 \usepackage{booktabs}
 \setlength{\abovetopsep}{3pt}
 \usepackage{multirow}
-\usepackage{rotating}
 \usepackage{placeins}
 \usepackage{amsthm}
 \usepackage{mathtools}
@@ -959,7 +958,7 @@ information from the exact colatitude of a vector.
 
 \input{tables/necessity.tex}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \caption{{\bf Interventions on one source at a time (released tokenizer).}
 (A)~Change in reconstruction
   error (percent of the unedited error) against the geodesic displacement of the edited vectors, for
@@ -976,7 +975,6 @@ information from the exact colatitude of a vector.
   line); medians over sources with interquartile ranges; colors denote cohorts as in B.}
 \label{fig:interventions}
 \end{figure}
-\clearpage
 
 The damage of zero-anchor is not a consequence of displacement as such. Zero-anchor was
 \LatitudeRatioMin--\LatitudeRatioMax{} times as damaging (cohort medians) as a rotation of the
@@ -1237,7 +1235,7 @@ in the lower tail of the null distribution of the same pipeline (null mean \AgeS
 
 \input{tables/readout.tex}
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \caption{{\bf Subject-level diagnostic read-out (released tokenizer).}
 AUC with 95\% bootstrap interval
   (within-cohort panels: mean over 20 repetitions of stratified five-fold cross-validation, out-of-fold
@@ -1251,7 +1249,6 @@ AUC with 95\% bootstrap interval
   \TransferIowaToUCSDRandN{} in the transfer panels); the dashed line marks chance.}
 \label{fig:readout}
 \end{figure}
-\clearpage
 
 
 

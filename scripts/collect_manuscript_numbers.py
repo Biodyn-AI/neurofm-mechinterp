@@ -645,31 +645,37 @@ def necessity_numbers() -> None:
     setm("BaselineMSEMin", f(min(base), 2))
     setm("BaselineMSEMax", f(max(base), 2))
     labels = [(k, lab) for k, lab in COHORTS if k in runs]
-    lines = [r"\begin{sidewaystable}", r"\renewcommand{\baselinestretch}{1}",
-             r"\caption{Change in reconstruction error under each edit, in percent of the unedited mean squared error (median "
-             r"over the 16 sources of the subject-mean change, with a 95\% subject-cluster bootstrap interval), and numbers of "
-             r"sources (out of 16) whose bootstrap interval of the subject-mean $\dmse$ lies above / below zero, released "
-             r"tokenizer; cells in which any of the three values is below 0.1\% in magnitude are given with two decimals. Edits "
-             r"are defined in \cref{tab:operators}; the median unedited errors of the edited segments (on the evaluated sensors) "
-             r"were " + ", ".join(
+    # upright, full text width: per cohort the median change, its interval and the counts of sources in separate columns
+    lines = [r"\begin{table}[tbp]", r"\renewcommand{\baselinestretch}{1}",
+             r"\caption{Change in reconstruction error under each edit (released tokenizer). Change: median over the 16 "
+             r"sources of the subject-mean change, in percent of the unedited mean squared error, with a 95\% subject-cluster "
+             r"bootstrap interval; entries in which the median or a bound of the interval is below 0.1\% in magnitude are "
+             r"given with two decimals. +/\textminus: numbers of sources (out of 16) whose bootstrap interval of the "
+             r"subject-mean $\dmse$ lies above / below zero. Edits are defined in \cref{tab:operators}; the median unedited "
+             r"errors of the edited segments (on the evaluated sensors) were " + ", ".join(
                  f"{lab} {f(runs[k]['baseline_mse_median'], 2)}" for k, lab in labels) + r".}",
-             r"\label{tab:necessity}", r"\centering\scriptsize", r"\setlength{\tabcolsep}{1.5pt}",
-             r"\begin{tabular}{l" + "c" * len(labels) + "}", r"\toprule",
-             r"\textbf{edit} & " + " & ".join(f"\\textbf{{{lab}}}" for _, lab in labels) + r" \\", r"\midrule"]
+             r"\label{tab:necessity}", r"\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}",
+             r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.4in}" + r"r@{\hspace{3pt}}l@{\hspace{5pt}}c" * len(labels) + "@{}}",
+             r"\toprule",
+             "& " + " & ".join(f"\\multicolumn{{3}}{{c}}{{\\textbf{{{lab}}}}}" for _, lab in labels) + r" \\",
+             "".join(f"\\cmidrule(lr){{{2 + 3 * i}-{4 + 3 * i}}}" for i in range(len(labels))),
+             r"\textbf{edit} & " + " & ".join(r"\multicolumn{2}{c}{\textbf{change (\%)}} & \textbf{+/\textminus}" for _ in labels) + r" \\",
+             r"\midrule"]
     for edit, label in NEC_EDITS:
         cells = []
         for k, _ in labels:
             e = runs[k]["edits"]["rel_mse"].get(edit)
             n = runs[k]["edits"]["d_mse"].get(edit)
             if e is None:
-                cells.append("--")
+                cells.append(r"\multicolumn{3}{c}{--}")
                 continue
             lo, hi = e["median_ci"]
             nd = 2 if min(abs(e["median"]), abs(lo), abs(hi)) < 1e-3 else 1
-            cells.append(f"{tnum(pct(e['median'], nd))} [{tnum(pct(lo, nd))},\\,{tnum(pct(hi, nd))}] ({n['n_above_zero']}/{n['n_below_zero']})")
+            cells.append(f"{tnum(pct(e['median'], nd))} & [{tnum(pct(lo, nd))}, {tnum(pct(hi, nd))}] & "
+                         f"{n['n_above_zero']}/{n['n_below_zero']}")
         lines.append(f"{label} & " + " & ".join(cells) + r" \\")
-    lines += [r"\bottomrule", r"\end{tabular}", r"\end{sidewaystable}"]
-    (TAB_DIR / "necessity.tex").write_text(plos_table(lines, ", "))
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+    (TAB_DIR / "necessity.tex").write_text(plos_table(lines, ". "))
 
 
 # ----------------------------------------------------------------------------- diagnosis
@@ -754,7 +760,9 @@ def readout_numbers() -> None:
                 setm(f"Paired{name}Anchor{tag}", f(d["difference"], 2))
                 setm(f"Paired{name}Anchor{tag}CI", ci(*d["ci"]))
                 setm(f"Paired{name}Anchor{tag}P", pval(d["p"]))
-    lines = [r"\begin{sidewaystable}", r"\renewcommand{\baselinestretch}{1}",
+    # upright, full text width: per contrast the AUC (marker set in the column gap) and its interval in separate columns
+    shown = [c for c in CONTRASTS if c[3] in res]
+    lines = [r"\begin{table}[tbp]", r"\renewcommand{\baselinestretch}{1}",
              r"\caption{Subject-level diagnostic read-out (released tokenizer): AUC (mean over 20 repetitions of stratified five-fold "
              r"cross-validation) "
              r"with a 95\% stratified bootstrap interval over subjects in which the out-of-fold scores are held fixed (it does "
@@ -768,25 +776,28 @@ def readout_numbers() -> None:
              r"and evaluated out of fold (per-source results are given in the text); adjusted: age and sex regressed out within "
              r"training folds. Last row: AUC range (2.5--97.5\% quantiles) of 100 random 16-direction representations evaluated "
              r"like anchor-16. Exact $p$-values: Table E in S1 Appendix.}",
-             r"\label{tab:readout}", r"\centering\scriptsize", r"\setlength{\tabcolsep}{2pt}",
-             r"\begin{tabular}{l" + "c" * len(tags) + "}", r"\toprule",
-             r"& " + " & ".join(f"\\textbf{{{c[2].split(', ')[0]}}}" for c in CONTRASTS if c[3] in res) + r" \\",
-             r"& " + " & ".join(f"\\textbf{{{c[2].split(', ')[1]}}} ($n={res[c[3]]['n_subjects']}$)" for c in CONTRASTS if c[3] in res) + r" \\",
+             r"\label{tab:readout}", r"\centering\small", r"\setlength{\tabcolsep}{5pt}",
+             r"\begin{tabular}{@{}l" + r"r@{\hspace{6pt}}l" * len(tags) + "@{}}", r"\toprule",
+             r"& " + " & ".join(f"\\multicolumn{{2}}{{c}}{{\\textbf{{{c[2].split(', ')[0]}}}}}" for c in shown) + r" \\",
+             "".join(f"\\cmidrule(lr){{{2 + 2 * i}-{3 + 2 * i}}}" for i in range(len(shown))),
+             r"& " + " & ".join(f"\\multicolumn{{2}}{{c}}{{\\textbf{{{c[2].split(', ')[1]}}}}}" for c in shown) + r" \\",
+             r"& " + " & ".join(f"\\multicolumn{{2}}{{c}}{{$n={res[c[3]]['n_subjects']}$}}" for c in shown) + r" \\",
              r"\midrule"]
     for feat, label in READOUT_ROWS:
         cells = []
         for tag in tags:
             e = {x["feature"]: x for x in res[tag]["results"]}.get(feat)
             if e is None:
-                cells.append("--")
+                cells.append(r"\multicolumn{2}{c}{--}")
                 continue
             p = holm[tag] if feat == "anchor16" else e.get("perm_p_fdr", e.get("perm_p", 1.0))
-            star = "$^{*}$" if p < 0.05 else ""
-            cells.append(f"{f(e['auc'], 2)}{star} [{f(e['auc_ci'][0], 2)}, {f(e['auc_ci'][1], 2)}]")
+            star = r"\rlap{$^{*}$}" if p < 0.05 else ""
+            cells.append(f"{f(e['auc'], 2)}{star} & [{f(e['auc_ci'][0], 2)}, {f(e['auc_ci'][1], 2)}]")
         lines.append(label + " & " + " & ".join(cells) + r" \\")
     lines.append(r"\midrule random 16 directions & " + " & ".join(
-        f"{f(res[t]['random16_null']['q025'], 2)}--{f(res[t]['random16_null']['q975'], 2)}" for t in tags) + r" \\")
-    lines += [r"\bottomrule", r"\end{tabular}", r"\end{sidewaystable}"]
+        f"\\multicolumn{{2}}{{c}}{{{f(res[t]['random16_null']['q025'], 2)}--{f(res[t]['random16_null']['q975'], 2)}}}"
+        for t in tags) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
     (TAB_DIR / "readout.tex").write_text(plos_table(lines, ": "))
     # exact p-values behind the markers of the read-out table (S1 Appendix, Table E)
     lines = [r"\begin{table}[!ht]", r"\renewcommand{\baselinestretch}{1}",
